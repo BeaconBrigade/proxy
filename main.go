@@ -11,16 +11,29 @@ import (
 	"strings"
 )
 
-var proxyAddr string = "https://stackoverflow.com"
+var proxyAddr string
 
-const localAddr string = "localhost:3000"
+var localAddr string = "localhost:3000"
 
 func main() {
 	args := os.Args
 	if len(args) > 1 {
 		proxyAddr = args[1]
+	} else {
+		fmt.Println("usage: proxy <url> [<address>]")
+		fmt.Println("Proxy <url> onto <address>")
+		fmt.Println("\turl\t\tthe url to proxy to")
+		fmt.Println("\taddress\t\tthe address to serve to, default: localhost:3000")
+		fmt.Println()
+		fmt.Println("example:")
+		fmt.Println("\tproxy https://github.com 0.0.0.0:80")
+		os.Exit(1)
+	}
+	if len(args) > 2 {
+		localAddr = args[2]
 	}
 	log.Printf("proxying to: %s", proxyAddr)
+	log.Printf("serving on %s", localAddr)
 	http.HandleFunc("/", root)
 	http.ListenAndServe(localAddr, nil)
 }
